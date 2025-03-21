@@ -5,6 +5,7 @@ namespace App\Http\Controllers\API;
 use App\Http\Controllers\Controller;
 use App\Repositories\Interfaces\ArenaRepositoryInterface;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 
 class ArenaController extends Controller
 {
@@ -24,8 +25,8 @@ class ArenaController extends Controller
     {
         $data = $request->validate([
             'name' => 'required|string|max:255',
-            'location' => 'required|string',
         ]);
+        $data['owner_id'] = Auth::id(); 
 
         return response()->json($this->arenaRepository->create($data), 201);
     }
@@ -40,7 +41,7 @@ class ArenaController extends Controller
     {
         $data = $request->validate([
             'name' => 'string|max:255',
-            'location' => 'string',
+            'owner_id' => 'exists:users,id', 
         ]);
 
         return $this->arenaRepository->update($id, $data)
